@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>
+        {% block title %}
+        {% endblock %}
+    </title>
+    {% block html_head %}
+    <script type="text/javascript"
+        src="{{ url_for('static', filename='jquery.js') }}"></script>
+    <script type="text/javascript"
+        src="{{ url_for('static', filename='ayeaye.js') }}"></script>
+        <script type="text/javascript"
+            src="/static/js/sijax/sijax.js"></script>
+        <script type="text/javascript">
+            {{ g.sijax.get_js()|safe }}
+        </script>
+    {% endblock %}
+</head>
+
+<body>
+    <header>
+        {% block menu %}
+        <ul>
+            <li><a href="/">Films</a></li>
+            <li><a href="/screenings">Screenings</a></li>
+            <li><a href="/incoming">Incoming</a></li>
+        </ul>
+        {% endblock %}    
+    </header>
+        {% block content %}
+        {% endblock %}
+
+    <div id="footer">
+        {% block footer %}
+        {% endblock %}
+    </div>
+</body>
+
+<style>
+
+</style>
+</html>

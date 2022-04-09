@@ -1,0 +1,21 @@
+{% extends "base.html" %}>
+{% block content %}
+<div class="divTable">
+    {% for dcp in dcps %}
+    <div class="divTableRow">
+        <div class="divTableCell">{{ dcp.Enc }}</div>
+        <div class="divTableCell">{{ dcp.titel1 or ''}}</div>
+        <div class="divTableCell">{{ dcp.CPL}}</div>
+        <div class="divTableCell">{{ dcp.Anzahl }}</div>
+        <div class="divTableCell">{{ dcp.OV }}</div>
+        <div class="divTableCell">{{ dcp.VFof }}</div>
+        <div class="divTableCell">{{ dcp.Comment }}</div>
+        <div class="divTableCell">{{ dcp.Verpackung }}</div>
+        <div class="divTableCell">{{ dcp.NAS2 }}</div>
+        <div class="divTableCell">{{ dcp.SYNC }}</div>
+        <div class="divTableCell">{{ dcp.SIZE }}</div>
+        <div class="divTableCell">{{ dcp.DATE.strftime("%d.%m. %H:%M") }}</div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
