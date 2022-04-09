@@ -1,5 +1,6 @@
-{% extends "base.html" %}>
-{% block content %}
+{% extends "home.html" %}>
+
+{% block tabelle %}
 <div class="divTable">
     {% for dcp in dcps %}
     <div class="divTableRow">
@@ -18,4 +19,7 @@
     </div>
     {% endfor %}
 </div>
+{% endblock %}
+
+{% block kontrollblatt %}
 {% endblock %}

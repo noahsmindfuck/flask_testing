@@ -1,7 +1,7 @@
-{% extends "base.html" %}>
+{% extends "base.html" %}
 {% block content %}
 <div class="wrapper">
-    <div id="film_table" class="TableContainer">
+    <div id="table" class="TableContainer">
         {% block tabelle %}
         <div class="divTable">
             {% for film in films %}
@@ -29,14 +29,10 @@
     </div>
     <div class="MenuContainer">
         {% block submenu %}
-        <ul>
-            <li><a href="">A</a></li>
-            <li><a href="">B</a></li>
-            <li><a href="">C</a></li>
-        </ul>
         {% endblock %}
     </div>
 </div>
+{% block kontrollblatt %}
 <div id="kontrollblatt" class="KontrollblattContainer">
     <form class="filmdaten_form" method="POST" id="{{ 'form' ~ film.filmid }}">
 
@@ -412,7 +408,7 @@
                                 placeholder="Notes from database"
                                 disabled>
                                 {{film.datenbank}}
-                                </textarea>";
+                                </textarea>
                         </div>
                     </div>
     
@@ -433,4 +429,5 @@
             </div>
         </div>
 </div>
+{% endblock %}
 {% endblock %}

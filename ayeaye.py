@@ -1,4 +1,5 @@
 # coding: utf-8
+import env
 
 from flask import Flask, g, render_template
 from flask_sqlalchemy import SQLAlchemy
@@ -7,7 +8,7 @@ import os, json
 import flask_sijax
 
 #import required tables from database model
-from database_scheme import FilmCinema, FilmDb, FilmKeylist, FilmScreening, FilmInsert
+from database_scheme import FilmCinema, FilmDb, FilmKeylist, FilmScreening, FilmInsert, FilmFestival
 
 app = Flask(__name__)
 # the next line is necessary with cPanel deployment
@@ -18,18 +19,19 @@ app.config['SIJAX_JSON_URI'] = '/home/noah/.local/lib/python3.8/site-packages/st
 flask_sijax.Sijax(app)
 
 # make sure the username, password and database name are correct
-username = 'drupal'
-password = 'u%23nfC63Hu8R8r7yk'
+username = env.user
+password = env.db_pwd
 userpass = 'mysql+pymysql://' + username + ':' + password + '@'
 # keep this as is for a hosted website
-server  = '37.252.189.147'
+server  = env.db_host
 # change to YOUR database name, with a slash added as shown
-dbname   = '/drupal_testing'
+dbname   = env.db
 # put them all together as a string that shows SQLAlchemy where the database is
 app.config['SQLALCHEMY_DATABASE_URI'] = userpass + server + dbname
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 # this variable, db, will be used for all SQLAlchemy commands
 db = SQLAlchemy(app)
+
 
 
 #################################
@@ -44,11 +46,10 @@ def inspection():
     filmid=0
     film = FilmDb.query.filter(FilmDb.filmid==filmid).first()
     films = FilmDb.query.order_by(FilmDb.titel1.asc()).all()
-
-    kinos_raw = FilmCinema.query.filter(FilmCinema.festival=='D')
-    kinos = []
-    for kino in kinos_raw:
-        kinos.append(kino.to_dict())
+    
+    kinos = {}
+    for kino in FilmCinema.query.filter(FilmCinema.festival==FilmFestival.query.first().type):
+        kinos[kino.name] = kino.to_dict()
 
     film_insert = FilmInsert.query.filter(FilmInsert.filmid==filmid).first()
     film_screenings=''
@@ -62,11 +63,13 @@ def inspection():
         for film_screening in FilmScreening.query.filter(FilmScreening.film_id==filmid).order_by(FilmScreening.zeit.asc(), FilmScreening.subzeit.asc()):
             film_screenings.append(film_screening.to_dict())
 
+        film_keys = {}
         if film.enc == 1 or film_insert.Enc == 1:
-            film_keys = FilmKeylist.query.filter(FilmKeylist.UUID==film_insert.UUID)
+            for key in FilmKeylist.query.filter(FilmKeylist.UUID==film_insert.UUID):
+                film_keys[key.Server] = key.to_dict()
         else:
-            film_keys = ''
-        obj_response.call('load_kontrollblatt', [film.to_dict(), film_insert.to_dict(), film_screenings, kinos])
+            film_keys = []
+        obj_response.call('load_kontrollblatt', [film.to_dict(), film_insert.to_dict(), film_screenings, kinos, film_keys])
 
     if g.sijax.is_sijax_request:
         # Sijax request detected - let Sijax handle it
@@ -83,16 +86,16 @@ def inspection():
 def screenings():
     film=""
     film_insert = ""
-    kinos = []
 
-    kinos_raw = FilmCinema.query.filter(FilmCinema.festival=='D')
-    for kino in kinos_raw:
-        kinos.append(kino.to_dict())
+    kinos = {}
+    for kino in FilmCinema.query.filter(FilmCinema.festival==FilmFestival.query.first().type):
+        kinos[kino.name] = kino.to_dict()
 
     film_screenings = FilmScreening.query.join(FilmDb, FilmDb.filmid == FilmScreening.film_id)\
         .add_columns(
             FilmDb.titel1,
             FilmDb.filmid,
+            FilmDb.min,
             FilmScreening.ingested,
             FilmScreening.getestet,
             FilmScreening.kino,
@@ -109,6 +112,7 @@ def screenings():
     def load_kontrollblatt(obj_response, filmid):
         #maybe join on film insert and screnings to call all data?
         film = FilmDb.query.filter(FilmDb.filmid==filmid).first()
+        film_insert = FilmInsert.query.filter(FilmInsert.filmid==filmid).first()
 
         film_screenings = []
         film_screenings_raw = FilmScreening.query\
@@ -122,12 +126,13 @@ def screenings():
         for film_screening in film_screenings_raw:
             film_screenings.append(film_screening.to_dict())
 
-        film_insert = FilmInsert.query.filter(FilmInsert.filmid==filmid).first()
+        film_keys = {}
         if film.enc == 1 or film_insert.Enc == 1:
-            film_keys = FilmKeylist.query.filter(FilmKeylist.UUID==film_insert.UUID)
+            for key in FilmKeylist.query.filter(FilmKeylist.UUID==film_insert.UUID):
+                film_keys[key.Server] = key.to_dict()
         else:
-            film_keys = ''
-        obj_response.call('load_kontrollblatt', [film.to_dict(), film_insert.to_dict(), film_screenings, kinos])
+            film_keys = []
+        obj_response.call('load_kontrollblatt', [film.to_dict(), film_insert.to_dict(), film_screenings, kinos, film_keys])
 
     if g.sijax.is_sijax_request:
         # Sijax request detected - let Sijax handle it
@@ -160,11 +165,11 @@ def incoming():
             )\
         .order_by(FilmInsert.DATE.desc()).all()
         dcps = dcps_raw
-
     except Exception as e:
         print(e)
 
     return render_template("incoming.html", dcps=dcps)
+
 @app.route('/film/<filmid>', methods=['POST','GET'])
 def film_einzeln(filmid):
     #maybe join on film insert and screnings to call all data?

@@ -13,6 +13,9 @@
         <div class="divTableCell">
             {{ screening.zeit }}
         </div>
+        <div class="divTableCell dauer">
+            {{ screening.min }}'
+        </div>
         <div class="divTableCell">
             {{ screening.kino }}
         </div>
@@ -28,6 +31,7 @@
 
 {% block submenu %}
 <ul>
+    <li class="all_cinemas_button"><a href="">All</a></li>
     {% for kino in kinos %}
         <li><a href="">{{ kino.name }}</a></li>
     {% endfor %}

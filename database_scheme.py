@@ -62,6 +62,7 @@ class FilmDb(db.Model, SerializerMixin):
     sichtungspasswort = Column(String(255), nullable=False)
     last_edit_by = Column(String(10), nullable=False)
     timestamp = Column(DateTime, nullable=False)
+    #screenings = db.relationship('FilmScreening', backref='screenings', lazy='dynamic')
 
 class FilmDbChangelog(db.Model):
     __tablename__ = 'film_db_changelog'
@@ -183,7 +184,7 @@ class FilmInsert(db.Model, SerializerMixin):
     DATE = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP"))
 
 
-class FilmKeylist(db.Model):
+class FilmKeylist(db.Model, SerializerMixin):
     __tablename__ = 'film_keylist'
 
     key_id = Column(INTEGER(5), primary_key=True, unique=True)
@@ -200,6 +201,7 @@ class FilmScreening(db.Model, SerializerMixin):
 
     screening_id = Column(INTEGER(6), primary_key=True, unique=True, server_default=text("'0'"))
     film_id = Column(INTEGER(6))
+    #film_id = Column(INTEGER(6), db.ForeignKey('FilmDb.filmid'))
     kino = Column(String(2))
     zeit = Column(DateTime, nullable=False)
     subzeit = Column(DateTime, nullable=False)
@@ -210,7 +212,6 @@ class FilmScreening(db.Model, SerializerMixin):
     kdm_vonbis = Column(String(10))
     last_edit_by = Column(String(10))
     timestamp = Column(DateTime)
-
 
 class FilmScreeningsChangelog(db.Model):
     __tablename__ = 'film_screenings_changelog'

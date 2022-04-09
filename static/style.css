@@ -4,6 +4,68 @@ body {
   padding: 0px;
   overflow:hidden;
 }
+
+header {
+  justify-content: space-between;
+  /* Items are evenly distributed in 
+     the line; firstitem is on the 
+     start line, last item on the 
+     end line*/
+  align-items: center;
+  position: fixed;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.7);
+  width: 100%;
+  z-index: 1;
+}
+
+header ul {
+  list-style-type: none;
+  margin: 0px;
+  padding: 0px;
+  overflow: hidden;
+  background-color: #8842d5;
+}
+
+header li {
+  display: inline-flex;
+}
+
+header li a {
+  display: block;
+  color: white;
+  text-align: left;
+  padding: 15px 17px;
+  text-decoration: none;
+}
+header li a:hover {
+  background-color: #7300ff;
+}
+header .search{
+  margin: 0px;
+  padding: 0px;
+  overflow: hidden;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  font-size: 25px;
+}
+
+header .search input, input:focus {
+  display: block;
+  background-color: #8842d5;
+  color: white;
+  padding-top: 7px;
+  text-decoration: none;
+  border:none;
+}
+
+header .search input::placeholder{
+  color:#ffb6e1;
+  font-weight: bold;
+}
+
+
 .MenuContainer{
   position: absolute;
   top: 53px;
@@ -25,10 +87,14 @@ body {
   font-size: 18px;
   text-decoration: none;
 }
-/* Links will change color when hovered over */
 .MenuContainer li a:hover {
   background-color: #00f7ff;
 }
+.MenuContainer .all_cinemas_button{
+  font-weight: bold;
+  border-bottom: #fff 1px solid;
+}
+
 
 .TableContainer{
   border-right: #8842d5 3px solid;
@@ -65,43 +131,9 @@ body {
   border-right: 1px solid rgba(255, 0, 242, 0.25);
 }
 
-header {
-  justify-content: space-between;
-  /* Items are evenly distributed in 
-     the line; firstitem is on the 
-     start line, last item on the 
-     end line*/
-  align-items: center;
-  position: fixed;
-  overflow: hidden;
-  background-color: rgba(0, 0, 0, 0.7);
-  width: 100%;
-  z-index: 1;
-}
-
-header ul {
-  list-style-type: none;
-  margin: 0px;
-  padding: 0px;
-  overflow: hidden;
-  background-color: #8842d5;
-}
-
-header li {
-  display: inline-flex;
-}
-
-header li a {
-  display: block;
-  color: white;
-  text-align: left;
-  padding: 15px 17px;
-  text-decoration: none;
-}
-
-/* Links will change color when hovered over */
-header li a:hover {
-  background-color: #7300ff;
+/*CSS for Screening*/
+.dauer {
+  text-align: right;
 }
 /* ~~~~~~~~~~~~ END FLASK CSS ~~~~~~~~~~~~~~~~ */
 
@@ -430,7 +462,7 @@ button:hover {
   border-color: #6cd156;
 }
 
-input, textarea {
+#KontrollblattContainer input, textarea {
   
   margin: 0px;
   border: 1px dotted #34cfeb;

@@ -23,14 +23,22 @@
 <body>
     <header>
         {% block menu %}
-        <ul>
-            <li><a href="/">Films</a></li>
-            <li><a href="/screenings">Screenings</a></li>
-            <li><a href="/incoming">Incoming</a></li>
-        </ul>
-        {% endblock %}    
+        <div>
+            <ul>
+                <li><a href="/">Films</a></li>
+                <li><a href="/screenings">Screenings</a></li>
+                <li><a href="/incoming">Incoming</a></li>
+            </ul>
+        {% endblock %}
+        {% block search %}
+        <div class="search">
+            <input id="searchbar" onkeyup="search_table()" type="text" name="search" placeholder="Search ...">
+        </div>
+    {% endblock %}
+    </div>
     </header>
         {% block content %}
+
         {% endblock %}
 
     <div id="footer">
