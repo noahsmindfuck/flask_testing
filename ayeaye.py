@@ -1,16 +1,20 @@
 # coding: utf-8
-import env
+from config import Config
 
-from flask import Flask, g, render_template
+from flask import Flask, g, redirect, render_template, flash, url_for
 from flask_sqlalchemy import SQLAlchemy
-import os, json
+import os
 #vvv vscode complains bot console allows this import :S
 import flask_sijax
 
 #import required tables from database model
 from database_scheme import FilmCinema, FilmDb, FilmKeylist, FilmScreening, FilmInsert, FilmFestival
 
+from forms import LoginForm
+
 app = Flask(__name__)
+app.config.from_object(Config)
+
 # the next line is necessary with cPanel deployment
 application = app
 path = os.path.join('.', os.path.dirname(__file__), 'static/js/sijax/')
@@ -18,21 +22,8 @@ app.config['SIJAX_STATIC_PATH'] = '/home/noah/.local/lib/python3.8/site-packages
 app.config['SIJAX_JSON_URI'] = '/home/noah/.local/lib/python3.8/site-packages/static/js/sijax/json2.js'
 flask_sijax.Sijax(app)
 
-# make sure the username, password and database name are correct
-username = env.user
-password = env.db_pwd
-userpass = 'mysql+pymysql://' + username + ':' + password + '@'
-# keep this as is for a hosted website
-server  = env.db_host
-# change to YOUR database name, with a slash added as shown
-dbname   = env.db
-# put them all together as a string that shows SQLAlchemy where the database is
-app.config['SQLALCHEMY_DATABASE_URI'] = userpass + server + dbname
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-# this variable, db, will be used for all SQLAlchemy commands
+#DB Configuration is handeld in config.py
 db = SQLAlchemy(app)
-
-
 
 #################################
 #ajax routes
@@ -41,12 +32,12 @@ db = SQLAlchemy(app)
 # / basically the landing page
 # Calls films alphabetically
 
-@flask_sijax.route(app, '/')
-def inspection():
+@flask_sijax.route(app, '/films')
+def films():
     filmid=0
     film = FilmDb.query.filter(FilmDb.filmid==filmid).first()
     films = FilmDb.query.order_by(FilmDb.titel1.asc()).all()
-    
+
     kinos = {}
     for kino in FilmCinema.query.filter(FilmCinema.festival==FilmFestival.query.first().type):
         kinos[kino.name] = kino.to_dict()
@@ -77,7 +68,12 @@ def inspection():
         return g.sijax.process_request()
 
     # Regular (non-Sijax request) - render the page template
-    return render_template("home.html", film=film, films=films, film_insert=film_insert, film_screenings=film_screenings, kinos=kinos)
+    return render_template("table_view.html", title="Home",
+        film=film, 
+        films=films, 
+        film_insert=film_insert, 
+        film_screenings=film_screenings, 
+        inos=kinos)
 
 # /screenings a list of all screenings
 # sorted by time
@@ -140,10 +136,23 @@ def screenings():
         return g.sijax.process_request()
 
     # Regular (non-Sijax request) - render the page template
-    return render_template("screenings.html", film=film, film_insert=film_insert, film_screenings=film_screenings, kinos=kinos)
+    return render_template("screenings.html", title="Screenings",
+        film=film, 
+        film_insert=film_insert, 
+        film_screenings=film_screenings, 
+        kinos=kinos)
 
 #################################
 #static non-ajax routes
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        flash('Login requested for user {}, remember_me={}'.format(
+            form.username.data, form.remember_me.data))
+        redirect(url_for('index'))
+    return render_template("login.html", title='Sign In', form=form)
+
 @app.route('/incoming', methods=['POST','GET'])
 def incoming():
     dcps = []
@@ -168,40 +177,11 @@ def incoming():
     except Exception as e:
         print(e)
 
-    return render_template("incoming.html", dcps=dcps)
-
-@app.route('/film/<filmid>', methods=['POST','GET'])
-def film_einzeln(filmid):
-    #maybe join on film insert and screnings to call all data?
-    film = FilmDb.query.filter(FilmDb.filmid==filmid).first()
-    film_screenings = FilmScreening.query.filter(FilmScreening.film_id==filmid)
-    film_insert = FilmInsert.query.filter(FilmInsert.filmid==filmid).first()
-    if film.enc == 1 or film_insert.Enc == 1:
-        film_keys = FilmKeylist.query.filter(FilmKeylist.UUID==film_insert.UUID)
-    else:
-        film_keys = ''
-
-    return render_template("film.html", film=film, film_insert=film_insert, film_screenings=film_screenings)
-    
-@app.route('/<filmid>')
-def home(filmid=0):
-    films = ''
-    #maybe join on film insert and screnings to call all data?
-    film = FilmDb.query.filter(FilmDb.filmid==filmid).first()
-    film_screenings = FilmScreening.query.filter(FilmScreening.film_id==filmid)
-    film_insert = FilmInsert.query.filter(FilmInsert.filmid==filmid).first()
-    if film.enc == 1 or film_insert.Enc == 1:
-        film_keys = FilmKeylist.query.filter(FilmKeylist.UUID==film_insert.UUID)
-    else:
-        film_keys = '' 
-
-    try:
-        films = FilmDb.query.order_by(FilmDb.titel1.asc()).all()
-    except Exception as e:
-        # see Terminal for description of the error
-        print(e)
-
-    return render_template("home.html", film=film, films=films, film_insert=film_insert, film_screenings=film_screenings)
+    return render_template("incoming.html", title="Incoming", dcps=dcps)
+  
+@app.route('/index')
+def index():
+    return render_template("index.html")
     
 ##############################
 # Main Loop of program

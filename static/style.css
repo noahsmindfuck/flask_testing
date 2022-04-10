@@ -19,6 +19,10 @@ header {
   z-index: 1;
 }
 
+.header_logo{
+  height: 53px;
+  padding: 0px 0px !important;
+}
 header ul {
   list-style-type: none;
   margin: 0px;
@@ -63,6 +67,14 @@ header .search input, input:focus {
 header .search input::placeholder{
   color:#ffb6e1;
   font-weight: bold;
+}
+
+#content {
+  position: absolute;
+  top: 53px;
+}
+#flash{
+  z-index: 99;
 }
 
 
@@ -113,7 +125,6 @@ header .search input::placeholder{
 }
 
 .divTable{
-  margin-top: 53px;
   display:table;
   width: 100vw;
 }

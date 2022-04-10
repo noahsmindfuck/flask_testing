@@ -3,10 +3,13 @@
 
 <head>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <title>
-        {% block title %}
-        {% endblock %}
-    </title>
+    {% block title %}
+        {% if title %}
+            <title>{{ title }} - Ayeaye</title>
+        {% else %}
+            <title>Welcome to Ayeaye</title>
+        {% endif %}
+    {% endblock %}
     {% block html_head %}
     <script type="text/javascript"
         src="{{ url_for('static', filename='jquery.js') }}"></script>
@@ -23,24 +26,41 @@
 <body>
     <header>
         {% block menu %}
-        <div>
+        <div class="menu">
             <ul>
-                <li><a href="/">Films</a></li>
-                <li><a href="/screenings">Screenings</a></li>
-                <li><a href="/incoming">Incoming</a></li>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('films') }}">Films</a></li>
+                <li><a href="{{ url_for('screenings') }}">Screenings</a></li>
+                <li><a href="{{ url_for('incoming') }}">Incoming</a></li>
+                <li><a href="{{ url_for('login') }}">Login</a></li>
             </ul>
+        </div>
         {% endblock %}
+        
         {% block search %}
         <div class="search">
             <input id="searchbar" onkeyup="search_table()" type="text" name="search" placeholder="Search ...">
         </div>
-    {% endblock %}
-    </div>
-    </header>
-        {% block content %}
-
         {% endblock %}
+    </header>
+    <div id="content">
+        <div class="wrapper">
+            <div id="flash">
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <ul>
+                    {% for message in messages %}
+                    <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% endwith %}
+            </div>
 
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
     <div id="footer">
         {% block footer %}
         {% endblock %}
