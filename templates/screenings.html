@@ -1,0 +1,39 @@
+{% extends "table_view.html" %}>
+
+{% block tabelle %}
+<div class="divTable">
+    {% for screening in film_screenings %}
+    <div class="divTableRow">
+        <div class="divTableCell">
+            {{ screening.ingested }}
+        </div>
+        <div class="divTableCell">
+            {{ screening.getestet }}
+        </div>
+        <div class="divTableCell">
+            {{ screening.zeit }}
+        </div>
+        <div class="divTableCell dauer">
+            {{ screening.min }}'
+        </div>
+        <div class="divTableCell">
+            {{ screening.kino }}
+        </div>
+        <div class="divTableCell">
+            <a href="javascript://" onclick="Sijax.request('load_kontrollblatt', [{{screening.filmid}}]);">
+                {{ screening.titel1 }}
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block submenu %}
+<ul>
+    <li class="all_cinemas_button"><a href="">All</a></li>
+    {% for kino in kinos %}
+        <li><a href="">{{ kino.name }}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}

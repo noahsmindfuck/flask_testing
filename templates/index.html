@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% block title %}
+        {% if title %}
+            <title>{{ title }} - Ayeaye</title>
+        {% else %}
+            <title>Welcome to Ayeaye</title>
+        {% endif %}
+    {% endblock %}
+    {% block html_head %}
+    <script type="text/javascript"
+        src="{{ url_for('static', filename='jquery.js') }}"></script>
+    <script type="text/javascript"
+        src="{{ url_for('static', filename='ayeaye.js') }}"></script>
+        <script type="text/javascript"
+            src="/static/js/sijax/sijax.js"></script>
+        <script type="text/javascript">
+            {{ g.sijax.get_js()|safe }}
+        </script>
+    {% endblock %}
+</head>
+
+<body>
+    <header>
+        {% block menu %}
+        <div class="menu">
+            <ul>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('films') }}">Films</a></li>
+                <li><a href="{{ url_for('screenings') }}">Screenings</a></li>
+                <li><a href="{{ url_for('incoming') }}">Incoming</a></li>
+                <li><a href="{{ url_for('login') }}">Login</a></li>
+            </ul>
+        </div>
+        {% endblock %}
+        
+        {% block search %}
+        <div class="search">
+            <input id="searchbar" onkeyup="search_table()" type="text" name="search" placeholder="Search ...">
+        </div>
+        {% endblock %}
+    </header>
+    <div id="content">
+        <div class="wrapper">
+            <div id="flash">
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <ul>
+                    {% for message in messages %}
+                    <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% endwith %}
+            </div>
+
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+    <div id="footer">
+        {% block footer %}
+        {% endblock %}
+    </div>
+</body>
+
+<style>
+
+</style>
+</html>
