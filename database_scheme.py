@@ -257,13 +257,3 @@ class FilmServer(db.Model):
     fix = Column(TINYINT(4), nullable=False)
     Kommentar = Column(String(100), nullable=False)
 
-class FilmUser(db.Model):
-    __tablename__ = 'film_user'
-    
-    id = Column(INTEGER, primary_key=True)
-    username = Column(String(80), unique=True, nullable=False)
-    email = Column(String(120), unique=True, nullable=False)
-    password = Column(String(120), nullable=False)
-
-    def __repr__(self):
-        return '<User %r>' % self.username

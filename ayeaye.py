@@ -73,7 +73,7 @@ def films():
         films=films, 
         film_insert=film_insert, 
         film_screenings=film_screenings, 
-        inos=kinos)
+        kinos=kinos)
 
 # /screenings a list of all screenings
 # sorted by time
@@ -186,5 +186,5 @@ def index():
 ##############################
 # Main Loop of program
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, threaded=False)
 
