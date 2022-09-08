@@ -11,6 +11,6 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     SQLALCHEMY_ENGINE_OPTIONS = {
         'echo_pool':'debug',
-        'pool_size':'10',
-        'max_overflow':'15'
+        'pool_size':10,
+        'max_overflow':15
     }
