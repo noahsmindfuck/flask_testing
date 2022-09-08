@@ -36,7 +36,7 @@ db = SQLAlchemy(app)
 def films():
     filmid=0
     film = FilmDb.query.filter(FilmDb.filmid==filmid).first()
-    films = FilmDb.query.order_by(FilmDb.titel1.asc()).all()
+    films = FilmDb.query.filter(FilmDb.medium=='DCP').order_by(FilmDb.titel1.asc()).all()
 
     kinos = {}
     for kino in FilmCinema.query.filter(FilmCinema.festival==FilmFestival.query.first().type):
