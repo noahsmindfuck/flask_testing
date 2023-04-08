@@ -1,7 +1,7 @@
 import os
 
 class Config(object):
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
+    SECRET_KEY = os.environ.get('SECRET_KEY') or '***'
     DB_PWD = os.environ.get('SECRET_KEY') or '***'
     DB_HOST = os.environ.get('SECRET_KEY') or '***'
     DB_USER = os.environ.get('SECRET_KEY') or 'flask_testing'
